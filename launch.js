@@ -112,6 +112,7 @@ const data = arr.then((res)=>{
 
 
 res.json({data}) 
+
 })
 
 const start= async()=>{
