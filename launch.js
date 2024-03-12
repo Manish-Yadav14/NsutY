@@ -28,7 +28,7 @@ async function imagepart(link){
 
 }
 
-   async function reroute(){
+async function reroute(){
   try {
   let num= randomNumber(10,100)
   const browser=await puppeteer.launch({
@@ -92,26 +92,28 @@ async function imagepart(link){
       return Array.from(thElements, th => th.textContent);
     });
     const attendanceArray = thTexts;
-    console.log(attendanceArray)
-    
+    // console.log(attendanceArray)
+    await browser.close();
     return attendanceArray;
    
     
   } catch (error) {
     console.log(error)
-    // again()
+    
   }
-  // await browser.close();
+  
 };
 
 const arr=reroute();
 
-const data = arr.then((res)=>{
-  console.log(res);
+let data2;
+
+
+const data = arr.then((response)=>{
+  res.json({data:response});
+  console.log({data:response})
 });
 
-
-res.json({data}) 
 
 })
 
