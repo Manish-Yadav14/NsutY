@@ -3,12 +3,14 @@ import prompt from "prompt"
 import puppeteer from 'puppeteer'
 import cors from 'cors';
 const app = express()
-
+let link;
 app.use(cors());
 
 app.use(express.static('./public'))
 const port = process.env.PORT || 5000;
-
+app.get('/captchareq',(req,res)=>{
+  res.json({data:link})
+})
 app.get('/attendance',(req,res)=>{
     
 function randomNumber(min, max) {
@@ -37,7 +39,7 @@ async function reroute(){
   });
   const page = await browser.newPage();
 
-  await page.goto('https://www.google.com',{waitUntil:'networkidle0'});
+  // await page.goto('https://www.google.com',{waitUntil:'networkidle0'});
 
   await page.goto('https://www.imsnsit.org',{waitUntil:'networkidle0'});
 
@@ -49,8 +51,8 @@ async function reroute(){
  
   await frame.$eval('#uid', el => el.value = '2022UIT3054');
   await frame.$eval('#pwd', el => el.value = 'wrchb~0');
-  const link=await frame.$eval('#captchaimg', el => el.src);
-
+  link=await frame.$eval('#captchaimg', el => el.src);
+  
   await delay(100);
 
   imagepart(link)
@@ -62,8 +64,13 @@ async function reroute(){
   });
 
   const pass = credentials.passcode
-
+  
+  // app.post('/captchares',(req,res)=>{
+  //    const otp=req.body
+  //    frame.type("#cap",otp);
+  // })
   await frame.type("#cap",pass);
+  
   await frame.click('#login')
   
   await frame.waitForNavigation()
@@ -77,9 +84,8 @@ async function reroute(){
   
     const f2 = await page.$("frame[name='data']")
     const frame2 = await f2.contentFrame();
-    await delay(100)
+    await delay(2000)
     
-   
     await frame2.select('#year','2023-24')
     await frame2.select('#sem','4')
     await delay(300)

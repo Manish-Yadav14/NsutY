@@ -34,38 +34,59 @@
       <div class="attendance-bar">
         <div class="subject">
           <label for="file">Operating System</label>
+          <div id="OS">Fetching...%</div>
           <progress id="file" value="85" max="100"></progress>
         </div>
         <div class="subject">
           <label for="file">Analog and Digital Communication</label>
+          <div id="ADC">Fetching...%</div>
           <progress id="file" value="88" max="100"></progress>
         </div>
         <div class="subject">
           <label for="file">Computer Networks</label>
+          <div id="CN">Fetching...%</div>
           <progress id="file" value="78" max="100"></progress>
         </div>
         <div class="subject">
           <label for="file">Design and Analysis of Algorithm</label>
+          <div id="DAA">Fetching...%</div>
           <progress id="file" value="90" max="100"></progress>
         </div>
         <div class="subject">
           <label for="file">Software Engineering </label>
+          <div id="SE">Fetching...%</div>
           <progress id="file" value="87" max="100"></progress>
         </div>
         <div class="subject">
-          <label for="file">Sports</label>
+          <label for="file">Yoga</label>
+          <div id="Yoga">Fetching...%</div>
           <progress id="file" value="65" max="100"></progress>
         </div>
       </div>
+      <img src="" alt="Image will be shown here" id="imgtagz" />
 
-      <button id="btn">get attendance</button>
+      <button
+        id="btn"
+        style="margin-left: 50px; margin-right: 50px; width: 120px"
+      >
+        Get Image
+      </button>
+      <!-- <form action="/sendcaptcha" method="post"> -->
+        <input type="text" id="OTPINPUT" oninput="handleInputChange()" />
+        <button
+          id="btn2"
+          style="margin-left: 50px; margin-right: 50px; width: 120px"
+        >
+          Get Attendance
+        </button>
+      <!-- </form> -->
     </section>
   </body>
   <script src="index.js"></script>
   <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"
-      integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
+    src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"
+    integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
 </html>
