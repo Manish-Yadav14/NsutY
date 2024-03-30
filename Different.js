@@ -121,14 +121,14 @@ app.get('/getcaptcha',(req,res)=>{
             res.send(base64Image)
         }
     })
-    await frame.$eval('#uid', el => el.value = '2022UIT3054');
-    await frame.$eval('#pwd', el => el.value = 'wrchb~0');
+    await frame.$eval('#uid', el => el.value = '2022UIT3055');
+    await frame.$eval('#pwd', el => el.value = '9650818207');
     await page.bringToFront();
     return ;
     }
     const callfunc=getCaptcha();
 
-    
+    //wrchb~0
 })
 
 app.post('/sendcaptcha',(req,res)=>{
@@ -137,16 +137,16 @@ app.post('/sendcaptcha',(req,res)=>{
     const {otp}=await req.body
     console.log(otp);
     OTPvalue=otp;
-    // f = await page.$("frame[name='banner']")
-    // frame =  await f.contentFrame();
     
-     await frame.type("#cap",OTPvalue);
-     await delay(500);
-     await frame.click('#login')
-     await delay(500)
-    //  await page.screenshot({path:'./image1.jpg'})
-     console.log("POINT 1");
-     await page.mouse.click(250,107)
+    await frame.type("#cap",OTPvalue);
+    await delay(500);
+    await frame.click('#login')
+    await delay(500)
+    f = await page.$("frame[name='banner']")
+    frame =  await f.contentFrame();
+    // await frame.click('xpath=/html/body/table/tbody/tr[1]/td/table/tbody/tr[2]/td[1]/table/tbody/tr/td[5]/a')
+    await frame.click('body > table > tbody > tr:nth-child(1) > td > table > tbody > tr:nth-child(2) > td:nth-child(1) > table > tbody > tr > td:nth-child(5) > a')
+    // await page.mouse.click(250,107)
      await delay(500)
      await page.mouse.click(17,327)
     //  await page.screenshot({path:'./image2.jpg'})
@@ -178,7 +178,7 @@ app.post('/sendcaptcha',(req,res)=>{
     console.log(attendanceArray);
     return attendanceArray;
      
-    //wrchb~0
+    
   }
   finale=g();  
   res.send("Received data");
