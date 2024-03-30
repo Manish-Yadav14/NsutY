@@ -1,13 +1,29 @@
-import express from 'express'
+import express, { response } from 'express'
+// import Tesseract from 'tesseract.js';
 import prompt from "prompt"
 import puppeteer from 'puppeteer'
-import cors from 'cors';
+import cors from 'cors'
+import fs from 'fs'
+import tesseract from 'node-tesseract-ocr'
+import { log } from 'console'
+
 let browser;
 let page;
 let link;
 let frame;
 let f;
 let finaldata;
+let texting;
+let OK=false;
+let finale;
+let OTPvalue;
+const config = {
+  lang: "eng", // default
+  oem: 3,
+  psm: 12,
+  tessedit_char_whitelist: '0123456789',
+}
+
 const app = express()
 app.use(cors());
 app.use(express.urlencoded({extended:false}))
@@ -24,15 +40,34 @@ function randomNumber(min, max) {
       setTimeout(res,time)
     })
   }
-  async function imagepart(link){
-    const browser2=await puppeteer.launch({
-      headless:false,
+  const getImageData = () => {
+    return new Promise((resolve, reject) => {
+        // Read the image file into a buffer
+        fs.readFile('./imgtes.jpg', (err, data) => { // Update path accordingly
+            if (err) {
+                console.log(err);
+                reject(err);
+            } else {
+                // Convert buffer data to base64 string
+                const base64Image = Buffer.from(data).toString('base64');
+                OK=true;
+                delay(1500);
+                resolve(base64Image);
+            }
+        });
     });
-    const page2 = await browser2.newPage();
-    await page2.goto(link);
-  
-  }
-
+}
+function waitForCondition() {
+  return new Promise((resolve) => {
+    const intervalId = setInterval(() => {
+      // Check the condition
+      if (OK === true) {
+        clearInterval(intervalId); // Stop the interval
+        resolve("Condition is met!"); // Resolve the promise
+      }
+    }, 30); // Check every 30ms
+  });
+}
 
 async function getAttendance(){
     try {
@@ -46,23 +81,54 @@ async function getAttendance(){
     }
 }
 
+
+// app.get('/mlFunction',(req,res)=>{
+  //   async function mlFunc() {
+    //     try {
+//       // const img = "https://www.imsnsit.org/imsnsit/images/captcha/captcha_1711166381.jpg"
+//       const text = await tesseract.recognize('imgtes.jpg',config)
+//       console.log("Result:", text)
+//     } catch (error) {
+  //       console.log(error.message)
+//     }
+//   }
+  
+//   mlFunc()
+// })
 app.get('/getcaptcha',(req,res)=>{
-    async function h(){
+    async function getCaptcha(){
     page = await browser.newPage();
     // await page.goto('https://www.google.com',{waitUntil:'networkidle0'});
     await page.goto('https://www.imsnsit.org',{waitUntil:'networkidle0'});
     await page.goto('https://www.imsnsit.org/imsnsit/student.htm',{waitUntil:'networkidle0'});
-    f =  await page.$("frame[name='banner']")
+    f = await page.$("frame[name='banner']")
     frame =  await f.contentFrame();
     link=await frame.$eval('#captchaimg', el => el.src);
     console.log(link);
-    return link;
+    const page2=await browser.newPage()
+    const viewSource=await page2.goto(link);
+    fs.writeFile("./imgtes.jpg",await viewSource.buffer(),function(err){
+        if (err){
+          return console.log(err)
+        }
+      })
+    fs.readFile('./imgtes.jpg', (err, data) => { 
+        if (err) {
+            console.log(err);
+            reject(err);
+        } else {
+            const base64Image = Buffer.from(data).toString('base64');
+            res.send(base64Image)
+        }
+    })
+    await frame.$eval('#uid', el => el.value = '2022UIT3054');
+    await frame.$eval('#pwd', el => el.value = 'wrchb~0');
+    await page.bringToFront();
+    return ;
     }
-    const arr=h();
-    const data = arr.then((response)=>{
-      res.json({data:response});
-      // console.log({data:response})
-    });
+    const callfunc=getCaptcha();
+
+    
 })
 
 app.post('/sendcaptcha',(req,res)=>{
@@ -70,26 +136,32 @@ app.post('/sendcaptcha',(req,res)=>{
   async function g(){
     const {otp}=await req.body
     console.log(otp);
-     await frame.$eval('#uid', el => el.value = '2022UIT3054');
-     await frame.$eval('#pwd', el => el.value = 'wrchb~0');
-     await frame.type("#cap",otp);
+    OTPvalue=otp;
+    // f = await page.$("frame[name='banner']")
+    // frame =  await f.contentFrame();
+    
+     await frame.type("#cap",OTPvalue);
+     await delay(500);
      await frame.click('#login')
-     await frame.waitForNavigation()
      await delay(500)
+    //  await page.screenshot({path:'./image1.jpg'})
+     console.log("POINT 1");
      await page.mouse.click(250,107)
      await delay(500)
      await page.mouse.click(17,327)
-     await delay(500)
+    //  await page.screenshot({path:'./image2.jpg'})
+     await delay(500)//
      await page.mouse.click(64,350)
-     await delay(600)
-  
+     await delay(500)
+    console.log("POINT 2")
+    // await page.screenshot({path:'./image3.jpg'})
     const f2 = await page.$("frame[name='data']")
     const frame2 = await f2.contentFrame();
-    await delay(2000)
-    
+    await delay(500)
+    //
     await frame2.select('#year','2023-24')
     await frame2.select('#sem','4')
-    await delay(300)
+    await delay(500)
     await page.mouse.click(675,153)
     // await frame2.click('xpath=//*[@id="rep"]/table/tbody/tr/td/input[3]')
     await delay(500)
@@ -100,18 +172,30 @@ app.post('/sendcaptcha',(req,res)=>{
     });
     const attendanceArray = thTexts;
     // console.log(attendanceArray)
-    // await browser.close();
+    // await browser.close()
+    OK=true;
+    console.log("hey");
+    console.log(attendanceArray);
     return attendanceArray;
-   
+     
+    //wrchb~0
   }
-  finaldata=g()
-  res.send('Got Data')
+  finale=g();  
+  res.send("Received data");
+  
 })
 app.get('/attendance',(req,res)=>{
-  const data = finaldata.then((response)=>{
+  waitForCondition().then((result)=>{
+    console.log(result);
+    console.log("Getting");
+    const dataprocessed=finale;
+    const data = dataprocessed.then((response)=>{
     res.json({data:response});
     console.log({data:response})
   });
+  })
+  
+  
 })
 getAttendance()
 
@@ -120,4 +204,4 @@ getAttendance()
         console.log(`Server is listening on port ${port}`)
     })
 }
-start();
+start()
